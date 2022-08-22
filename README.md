@@ -63,4 +63,6 @@ You can run tests, linter and formatter using the following:
 
 ## Continuous Integration
 
-There's a Pull Request validation setup and you can check it out in [pr-validation.yaml](.github/workflow/pr-validation.yaml). It will run the tests on Windows, Mac and Linux as well as verify that the linter passes without any warnings or errors as well as that the code is formatted correctly.
+There's a Pull Request validation setup and you can check it out in [pr-validation.yaml](.github/workflows/pr-validation.yaml). It will run the tests on Windows, Mac and Linux as well as verify that the linter passes without any warnings or errors as well as that the code is formatted correctly.
+
+This repository is using [branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/managing-a-branch-protection-rule) to make sure it's not possible to commit directly to the `main` branch as well as that all the checks in the Pull Request Validation is passing.
