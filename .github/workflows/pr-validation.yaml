@@ -1,0 +1,52 @@
+name: PR Validation
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run tests
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module Pester -MinimumVersion 5.3.3 -Force -Scope CurrentUser -ErrorAction Stop
+        . ".make-functions.ps1"
+        Invoke-Tests
+      shell: pwsh
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run linter
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module PSScriptAnalyzer -MinimumVersion 1.20.0 -Force -Scope CurrentUser -ErrorAction Stop
+        . ".make-functions.ps1"
+        Invoke-Linter
+      shell: pwsh
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run formatter
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module PSScriptAnalyzer -MinimumVersion 1.20.0 -Force -Scope CurrentUser -ErrorAction Stop
+        . ".make-functions.ps1"
+        Invoke-FormatAll
+      shell: pwsh
+    - name: Check if working tree is dirty
+      run: |
+        if [[ $(git status --porcelain) ]]; then
+          git diff
+          echo 'run Invoke-FormatAll and commit changes'
+          exit 1
+        fi
